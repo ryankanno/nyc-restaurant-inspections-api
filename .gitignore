@@ -25,3 +25,7 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+
+#NYC Data
+data/*.txt
+data/*.xls
