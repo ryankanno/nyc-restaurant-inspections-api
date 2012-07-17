@@ -1,6 +1,6 @@
-#ny-health-ratings
+#ny-restaurant-inspections
 
-A small Flask + Redis weekend-project that returns the latest and greatest inspection results for NYC restaurants.
+A small Flask + Redis weekend-project that returns the latest and greatest restaurant inspections for NYC restaurants.
 
 Data courtesy of https://nycopendata.socrata.com/Health/Restaurant-Inspection-Results/4vkw-7nck
 
