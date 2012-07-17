@@ -77,15 +77,21 @@ class Restaurant(Base):
     building = Column(String(10))
     street = Column(String(100))
     zip = Column(String(5))
+    borough = Integer()
     phone = Column(String(20))
     
     inspections = relationship('Inspection', backref='restaurant',
         primaryjoin="Restaurant.id==Inspection.restaurant_id")
 
     def __init__(self, unique_id=None, name=None, building=None, street=None,
-            zip=None, phone=None):
+            zip=None, borough=None, phone=None):
         self.unique_id = unique_id
         self.name = name
+        self.building = building
+        self.street = street
+        self.zip = zip
+        self.borough = borough
+        self.phone = phone
 
     def __repr__(self):
         return u"<Restaurant %r>".format(self.name)
