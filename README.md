@@ -1,6 +1,8 @@
 #ny-health-ratings
 
-A small Flask + Redis API that returns the latest and greatest health ratings for NYC restaurants.
+A small Flask + Redis weekend-project that returns the latest and greatest inspection results for NYC restaurants.
+
+Data courtesy of https://nycopendata.socrata.com/Health/Restaurant-Inspection-Results/4vkw-7nck
 
 ##install
 
@@ -9,6 +11,9 @@ A small Flask + Redis API that returns the latest and greatest health ratings fo
 To create the database as a temp SQL Lite database, run the following command:
 
 `python data/install.py`
+
+Note: At some point, this will just pull from the above url, but in the
+meantime, bear with me. :D
 
 ###deploy
 
