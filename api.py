@@ -1,7 +1,12 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+
+import sys, os
+
 from flask import Flask, request, jsonify
 from database import db_session
 
-import sys, os
 PROJECT_ROOT = os.path.normpath(os.path.realpath(os.path.dirname(__file__)))
 sys.path.insert(0, PROJECT_ROOT)
 
@@ -9,15 +14,16 @@ from models import Restaurant
 
 app = Flask(__name__)
 
+
 @app.teardown_request
 def shutdown_session(exception=None):
     db_session.remove()
 
 
-@app.route("/", methods=['GET'])
+@app.route("/", methods=['POST'])
 def search():
     results = []
-    name = request.args.get('name', '', type=str)
+    name = request.form.get('name', '', type=str)
     restaurants = Restaurant.query.filter(Restaurant.name.like("%{0}%".format(name.upper())))
 
     for restaurant in restaurants:
@@ -41,7 +47,7 @@ def search():
             i.append(inspect)
 
         i.sort(key=lambda x:x['inspected_date'], reverse=True)
-        r = restaurant.to_json
+        r = restaurant.serialize
         r['inspections'] = i
         results.append(r)
 
@@ -50,3 +56,6 @@ def search():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+
+# vim: filetype=python

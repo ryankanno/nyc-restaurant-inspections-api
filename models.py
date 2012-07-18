@@ -97,8 +97,8 @@ class Restaurant(Base):
         return u"<Restaurant %r>".format(self.name)
 
     @property
-    def to_json(self):
-        return to_json(self, self.__class__)
+    def serialize(self):
+        return serialize(self, self.__class__)
 
 
 class Inspection(Base):
@@ -142,19 +142,18 @@ class Inspection(Base):
         return u"<Inspection {0}>".format(self.id)
 
     @property
-    def to_json(self):
-        return to_json(self, self.__class__)
+    def serialize(self):
+        return serialize(self, self.__class__)
 
 
 CONVERTERS = {}
 
-def to_json(inst, cls):
+def serialize(inst, cls):
     converters = {}
     data = {}
 
     for col in cls.__table__.columns:
         val = getattr(inst, col.name)
-        print col.type
         if col.type in converters.keys() and val is not None:
             try:
                 data[col.name] = converters[col.type](v)
