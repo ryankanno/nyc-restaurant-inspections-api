@@ -1,17 +1,30 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+
+__all__     = ['main']
+__author__  = "Ryan Kanno <ryankanno@localkinegrinds.com>"
+__url__     = ""
+__version__ = ""
+__license__ = ""
+
+
+import argparse, platform, logging, sys, os, time
+import csv, codecs
+
 from sqlalchemy import create_engine, Column, String, Integer, MetaData, Table
-import csv
-import logging
 from datetime import datetime
-import codecs
+from zipfile import ZipFile
 
-import sys, os
 DATA_DIRECTORY = os.path.normpath(os.path.realpath(os.path.dirname(__file__)))
-
 sys.path.insert(0, os.path.join(DATA_DIRECTORY, os.path.pardir))
 
 from models import Action, Violation, Cuisine, Restaurant, Inspection
 from database import db_session, init_db
-from zipfile import ZipFile
+
+
+LOG_LEVEL  = logging.DEBUG
+LOG_FORMAT = '%(asctime)s %(levelname)s %(message)s'
 
 
 DATA_ZIP_FILE = 'dohmh_restaurant-inspections_002.zip'
@@ -19,13 +32,14 @@ CSV_DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 
 
 def load_file_and_process(path, process_func):
-    logging.debug("Begin processing {0}".format(path))
+    logging.debug("Begin processing {0}\n".format(path))
 
     with open(path, 'rb') as f:
-        reader = csv.DictReader(f, delimiter=',')
-        header_row = reader.next()
+        rdr = csv.DictReader(f, delimiter=',')
+        hdr = rdr.next()
+
         i = 0
-        for row in reader:
+        for row in rdr:
             i += 1
             logging.debug("Processing row {0} from {1}".format(i, path))
             process_func(row)
@@ -138,7 +152,11 @@ def cleanup():
         if f.endswith(".txt") or f.endswith(".xls")] 
 
 
-if __name__ == "__main__":
+def main(argv=None):
+    logging.basicConfig(level=LOG_LEVEL, format=LOG_FORMAT)
+
+    if argv is None:
+        argv = sys.argv
 
     init_workspace()
     init_db()
@@ -153,6 +171,21 @@ if __name__ == "__main__":
     try:
         for fp in file_processor_tuples:
             load_file_and_process(os.path.join(DATA_DIRECTORY, fp[0]), fp[1])
-    except Exception, err:
-        logging.error(err)
+    except KeyboardInterrupt as e:
+        logging.error("OMGWTFBBQ: CTRL-C, ftl.")
+        sys.exit(1)
+    except Exception as e:
+        logging.error("OMGWTFBBQ: {0}".format(e.args))
+        sys.exit(1)
+    finally:
         cleanup()
+
+    # Yayyy-yah
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv[1:]))
+
+
+# vim: filetype=python
