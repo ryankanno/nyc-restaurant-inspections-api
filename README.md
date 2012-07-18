@@ -26,6 +26,6 @@ To run the flask app, make sure you have Flask installed:
 
 Here are some curl commands to play around with the api:
 
-** Finding all restaurants with Japanese in their name **
+**Finding all restaurants with Japanese in their name**
 
 `curl -s -H "Accept:  application/json" -d "name=Japanese" http://localhost:5000 | python -mjson.tool`
