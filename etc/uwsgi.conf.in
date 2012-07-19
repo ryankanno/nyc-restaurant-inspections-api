@@ -1,0 +1,13 @@
+<uwsgi>
+    <socket>127.0.0.1:6969</socket>
+    <pythonpath>/var/www/apps/ny-restaurant-inspections/current</pythonpath>
+    <module>api:app</module>
+    <plugins>python</plugins>
+    <processes>1</processes>
+    <daemonize/>
+    <enable-threads/>
+    <master/>
+    <harakiri>120</harakiri>
+    <max-requests>5000</max-requests>
+    <disable-logging>false</disable-logging>
+</uwsgi>
