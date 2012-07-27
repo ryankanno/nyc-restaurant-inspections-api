@@ -20,16 +20,16 @@ def shutdown_session(exception=None):
     db_session.remove()
 
 
+# TODO : Add address search
 @app.route("/", methods=['POST'])
 def search():
     results = []
-    name = request.form.get('name', '', type=str)
+    name = request.form.get('name', '', type=str).strip()
     restaurants = Restaurant.query.filter(Restaurant.name.like("%{0}%".format(name.upper())))
 
     for restaurant in restaurants:
         i = []
         for inspection in restaurant.inspections:
-            
             inspect = {
                 'current_grade': inspection.current_grade,
                 'inspected_date': inspection.graded_at.strftime('%Y-%m-%dT%H:%M:%S'),
