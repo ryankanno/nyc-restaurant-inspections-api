@@ -146,6 +146,7 @@ class Inspection(Base):
         return serialize(self, self.__class__)
 
 
+# TODO : Need to add datetime converters :D
 CONVERTERS = {}
 
 def serialize(inst, cls):
