@@ -139,7 +139,7 @@ def init_workspace():
     logging.debug("Unzipping data file")
 
     zip = ZipFile(os.path.join(DATA_DIRECTORY, DATA_ZIP_FILE))
-    zip.extractall()
+    zip.extractall(path=DATA_DIRECTORY)
 
     if (os.path.exists('/tmp/test.db')):
         logging.debug("Removing previous database")
