@@ -148,7 +148,7 @@ def init_workspace():
 
 def cleanup():
     logging.debug("Cleaning up")
-    [os.remove(f) for f in os.listdir(DATA_DIRECTORY) \
+    [os.remove(os.path.join(DATA_DIRECTORY, f)) for f in os.listdir(DATA_DIRECTORY) \
         if f.endswith(".txt") or f.endswith(".xls")] 
 
 
