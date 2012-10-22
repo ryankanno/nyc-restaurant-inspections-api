@@ -2,9 +2,12 @@
 # -*- coding: utf-8 -*-
 
 
-import sys, os
+import sys
+import os
 
-from flask import Flask, request, jsonify
+from flask import Flask
+from flask import request
+from flask import jsonify
 from database import db_session
 
 PROJECT_ROOT = os.path.normpath(os.path.realpath(os.path.dirname(__file__)))
@@ -25,14 +28,16 @@ def shutdown_session(exception=None):
 def search():
     results = []
     name = request.form.get('name', '', type=str).strip()
-    restaurants = Restaurant.query.filter(Restaurant.name.like("%{0}%".format(name.upper())))
+    filterspec = Restaurant.name.like("%{0}%".format(name.upper()))
+    restaurants = Restaurant.query.filter(filterspec)
 
     for restaurant in restaurants:
         i = []
         for inspection in restaurant.inspections:
             inspect = {
                 'current_grade': inspection.current_grade,
-                'inspected_date': inspection.graded_at.strftime('%Y-%m-%dT%H:%M:%S'),
+                'inspected_date': inspection.graded_at.
+                strftime('%Y-%m-%dT%H:%M:%S'),
                 'score': inspection.score,
             }
 
@@ -46,7 +51,7 @@ def search():
 
             i.append(inspect)
 
-        i.sort(key=lambda x:x['inspected_date'], reverse=True)
+        i.sort(key=lambda x: x['inspected_date'], reverse=True)
         r = restaurant.serialize
         r['inspections'] = i
         results.append(r)
