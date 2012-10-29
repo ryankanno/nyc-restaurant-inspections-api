@@ -24,39 +24,23 @@ def shutdown_session(exception=None):
 
 
 # TODO : Add address search
-@app.route("/", methods=['POST'])
+@app.route("/")
 def search():
     results = []
-    name = request.form.get('name', '', type=str).strip()
-    filterspec = Restaurant.name.like("%{0}%".format(name.upper()))
-    restaurants = Restaurant.query.filter(filterspec)
 
-    for restaurant in restaurants:
-        i = []
-        for inspection in restaurant.inspections:
-            inspect = {
-                'current_grade': inspection.current_grade,
-                'inspected_date': inspection.graded_at.
-                strftime('%Y-%m-%dT%H:%M:%S'),
-                'score': inspection.score,
-            }
+    if request.method == 'POST':
+        name = request.form.get('name', '', type=str).strip()
+    else:
+        name = request.args.get('name', '', type=str).strip()
 
-            if inspection.action:
-                inspect['action_code'] = inspection.action.code
-                inspect['action_desc'] = inspection.action.description
+    if name:
+        filterspec = Restaurant.name.like("%{0}%".format(name.upper()))
+        restaurants = Restaurant.query.filter(filterspec)
 
-            if inspection.violation:
-                inspect['violation_code'] = inspection.violation.code
-                inspect['violation_desc'] = inspection.violation.description
+        for restaurant in restaurants:
+            results.append(restaurant.serialize)
 
-            i.append(inspect)
-
-        i.sort(key=lambda x: x['inspected_date'], reverse=True)
-        r = restaurant.serialize
-        r['inspections'] = i
-        results.append(r)
-
-    return jsonify(data=results)
+    return jsonify(restaurants=results)
 
 
 if __name__ == "__main__":

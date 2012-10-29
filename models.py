@@ -2,6 +2,9 @@ from sqlalchemy import Column
 from sqlalchemy import Integer, Unicode, String, Boolean, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from database import Base
+from collections import OrderedDict
+import itertools
+from utilities import empty_dict
 
 
 BOROUGHS = {
@@ -98,9 +101,70 @@ class Restaurant(Base):
     def __repr__(self):
         return u"<Restaurant %r>".format(self.name)
 
+    def _serialized_inspections(self):
+        serialized_inspections = []
+        if self.inspections:
+            groups = []
+            sorted_inspections = sorted(
+                self.inspections, key=lambda x: x.graded_at,
+                reverse=True)
+
+            for k, g in itertools.groupby(sorted_inspections,
+                                          key=lambda x: x.graded_at):
+                groups.append(list(g))
+
+            for group in groups:
+                if len(group) > 0:
+                    serialized_inspection = self._init_inspection(group[0])
+                    violations = []
+                    for inspection in group:
+                        violations.append(self._parse_violation(inspection))
+                    serialized_inspection['violations'] = violations
+                    serialized_inspections.append(serialized_inspection)
+
+        return serialized_inspections
+
+    def _init_inspection(self, inspection_obj):
+        inspection = {}
+        if inspection_obj:
+            inspection = inspection_obj.serialize
+            empty_dict(inspection,
+                       ['action_code', 'action_desc',
+                        'violation_code', 'violation_desc',
+                        'violation_is_critical'])
+        return inspection
+
+    def _parse_violation(self, inspection_obj):
+        violation = {}
+        if inspection_obj:
+            inspection = inspection_obj.serialize
+            violation['violation_code'] = inspection['violation_code']
+            violation['violation_desc'] = inspection['violation_desc']
+            violation['violation_is_critical'] = \
+                inspection['violation_is_critical']
+        return violation
+
+    @property
+    def address(self):
+        bldg = self.building.strip()
+        bldg = "{0} ".format(bldg) if len(bldg) > 0 else ""
+        if self.street and self.zip:
+            return u"{building}{street}".format(
+                building=bldg, street=self.street)
+        else:
+            return ""
+
     @property
     def serialize(self):
-        return serialize(self, self.__class__)
+        restaurant = OrderedDict()
+        restaurant['name'] = self.name
+        restaurant['phone'] = self.phone
+        restaurant['street_address'] = self.address
+        restaurant['zip_code'] = self.zip
+        restaurant['city'] = 'New York'
+        restaurant['state'] = 'NY'
+        restaurant['inspections'] = self._serialized_inspections()
+        return restaurant
 
 
 class Inspection(Base):
@@ -148,26 +212,24 @@ class Inspection(Base):
 
     @property
     def serialize(self):
-        return serialize(self, self.__class__)
+        inspection = {
+            'score': self.score,
+            'current_grade': self.current_grade,
+            'inspection_date': self.graded_at.strftime('%Y-%m-%dT%H:%M:%S'),
+            'action_code': '',
+            'action_desc': '',
+            'violation_code': '',
+            'violation_desc': '',
+            'violation_is_critical': ''
+        }
 
+        if self.action:
+            inspection['action_code'] = self.action.code
+            inspection['action_desc'] = self.action.description
 
-# TODO : Need to add datetime converters :D
-CONVERTERS = {}
+        if self.violation:
+            inspection['violation_code'] = self.violation.code
+            inspection['violation_desc'] = self.violation.description
+            inspection['violation_is_critical'] = self.violation.is_critical
 
-
-def serialize(inst, cls):
-    converters = {}
-    data = {}
-
-    for col in cls.__table__.columns:
-        val = getattr(inst, col.name)
-        if col.type in converters.keys() and val is not None:
-            try:
-                data[col.name] = converters[col.type](v)
-            except:
-                data[c.name] = "Error:  Failed to covert using ", \
-                    str(converters[c.type])
-        else:
-            data[col.name] = val if val else ""
-
-    return data
+        return inspection
