@@ -24,14 +24,10 @@ def shutdown_session(exception=None):
 
 
 # TODO : Add address search
-@app.route("/")
+@app.route("/", methods=['POST'])
 def search():
     results = []
-
-    if request.method == 'POST':
-        name = request.form.get('name', '', type=str).strip()
-    else:
-        name = request.args.get('name', '', type=str).strip()
+    name = request.form.get('name', '', type=str).strip()
 
     if name:
         filterspec = Restaurant.name.like("%{0}%".format(name.upper()))
