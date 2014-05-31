@@ -1,28 +1,35 @@
-#ny-restaurant-inspections
+nyc-inspections
+===============
 
-A small Flask + Redis weekend-project that returns the latest and greatest restaurant inspections for NYC restaurants.
+An API for NYC restaurant inspections.
+
+A tiny Flask + Redis weekend project that returns NYC restaurant inspections.
 
 Data courtesy of https://nycopendata.socrata.com/Health/Restaurant-Inspection-Results/4vkw-7nck
 
-##install
+install
+-------
 
-###data
+data
+~~~~
 
-To create the database as a temp SQL Lite database, run the following command:
+To create the database as a temp SQLite database, run the following command:
 
-`python data/install.py`
+`python nyc_inspections/data/install.py`
 
-Note: At some point, this will just pull from the above url, but in the
+Note: At some point, this will pull data from the above url, but in the
 meantime, bear with me. :D
 
-###deploy
+deploy
+~~~~~~
 
 To run the flask app, make sure you have Flask installed:
 
 `python api.py`
 
 
-###test
+test
+~~~~
 
 Here are some curl commands to play around with the api:
 
