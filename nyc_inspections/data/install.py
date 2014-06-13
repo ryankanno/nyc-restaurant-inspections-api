@@ -9,21 +9,11 @@ __version__ = ""
 __license__ = ""
 
 
-import argparse
-import platform
 import logging
 import sys
 import os
-import time
 import csv
-import codecs
 
-from sqlalchemy import create_engine
-from sqlalchemy import Column
-from sqlalchemy import String
-from sqlalchemy import Integer
-from sqlalchemy import MetaData
-from sqlalchemy import Table
 from datetime import datetime
 from zipfile import ZipFile
 
@@ -52,7 +42,7 @@ def load_file_and_process(path, process_func):
 
     with open(path, 'rb') as f:
         rdr = csv.DictReader(f, delimiter=',')
-        hdr = rdr.next()
+        rdr.next()
 
         i = 0
         for row in rdr:

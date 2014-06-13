@@ -1,12 +1,19 @@
-from fabric.api import env, require, task, settings, run, sudo, roles, cd, prefix, put
+from fabric.api import cd
+from fabric.api import env
+from fabric.api import prefix
+from fabric.api import require
+from fabric.api import roles
+from fabric.api import run
+from fabric.api import settings
+from fabric.api import sudo
+from fabric.api import task
 from fabric.operations import prompt
-from fabric.contrib.files import exists, sed, upload_template
-from fabric.colors import *
+from fabric.contrib.files import exists, upload_template
 
-from contextlib import contextmanager 
+from contextlib import contextmanager
 
+import fnmatch
 import os
-import calendar
 import time
 from time import gmtime, strftime
 
@@ -16,19 +23,19 @@ Configuration
 #CHANGEME
 """
 
-# root 
-env.root         = os.path.abspath(os.path.dirname(__file__)) 
+# root
+env.root = os.path.abspath(os.path.dirname(__file__))
 
-# project 
+# project
 env.project_name = 'ny-restaurant-inspections'
 
 # paths
 # > remote
-env.path         = '/var/www/apps/%(project_name)s' % env 
-env.env_path     = '%(path)s/env'  % env
-env.repo_path    = '%(path)s/repo' % env
-env.rel_path     = '%(path)s/rel'  % env
-env.curr_path    = '%(path)s/current' % env
+env.path = '/var/www/apps/%(project_name)s' % env
+env.env_path = '%(path)s/env' % env
+env.repo_path = '%(path)s/repo' % env
+env.rel_path = '%(path)s/rel' % env
+env.curr_path = '%(path)s/current' % env
 
 env.pip_req_file = '%(repo_path)s/etc/requirements.txt' % env
 
@@ -36,25 +43,23 @@ env.pip_req_file = '%(repo_path)s/etc/requirements.txt' % env
 env.maintenance_file = '%(root)s/etc/maintenance.html.tmpl' % env
 
 # config
-env.activate     = 'source %(env_path)s/bin/activate' % env
-env.python       = 'python2.7'
-env.utc_ts       = gmtime()
-env.utc_ts_str   = strftime('%Y%m%d_%H%M%S', env.utc_ts)
+env.activate = 'source %(env_path)s/bin/activate' % env
+env.python = 'python2.7'
+env.utc_ts = gmtime()
+env.utc_ts_str = strftime('%Y%m%d_%H%M%S', env.utc_ts)
 
-env.user         = 'uwsgi-app'
-env.password     = 'uwsgi-app'
-env.git_repo     = 'https://github.com/ryankanno/ny-restaurant-inspections.git'
+env.user = 'uwsgi-app'
+env.password = 'uwsgi-app'
+env.git_repo = 'https://github.com/ryankanno/nyc-inspections.git'
 env.num_releases = 5
 env.cache_buster = ''
 
 
-"""
-Environments
-"""
+# Environments
 @task
 def production():
     env.settings = 'production'
-    env.hosts    = ['88.88.88.88']
+    env.hosts = ['88.88.88.88']
     env.roledefs.update({'www': ['88.88.88.88']})
 
 
@@ -68,9 +73,7 @@ def local():
     env.settings = 'local'
 
 
-"""
-Branches
-"""
+# Branches
 @task
 def master():
     env.branch = 'master'
@@ -81,10 +84,7 @@ def branch(branch_name):
     env.branch = branch_name
 
 
-"""
-Task helpers
-"""
-
+# Task helpers
 @contextmanager
 def virtualenv():
     with cd(env.env_path):
@@ -123,7 +123,8 @@ def clone_repo():
 def checkout():
     """ Checkout """
     with cd(env.repo_path):
-        run('git checkout %(branch)s; git pull origin %(branch)s; git submodule update --init' % env)
+        run('git checkout %(branch)s; \
+             git pull origin %(branch)s; git submodule update --init' % env)
 
 
 def service(name, *actions):
@@ -143,15 +144,14 @@ def configure_app():
 
 def symlink_release():
     """ Symlink the current release """
-    """ See: http://blog.moertel.com/articles/2005/08/22/how-to-change-symlinks-atomically """
     milliseconds_since_epoch = int(round(time.time() * 1000))
     curr_tmp = '%s_%s' % (env.curr_path, milliseconds_since_epoch)
 
-    run('ln -s %s %s && mv -Tf %s %s' % 
-        (get_latest_release(), 
+    run('ln -s %s %s && mv -Tf %s %s' %
+        (get_latest_release(),
          curr_tmp,
          curr_tmp,
-        '%(curr_path)s' % env))
+         '%(curr_path)s' % env))
 
 
 def get_sorted_releases():
@@ -173,7 +173,7 @@ def remove_latest_release():
 
 def keep_num_releases(num_releases):
     releases = get_sorted_releases()
-    num_to_delete = len(releases) - num_releases 
+    num_to_delete = len(releases) - num_releases
 
     # Must keep a minimum of one release
     if num_to_delete > 1:
@@ -189,18 +189,18 @@ def find_files(directory, pattern):
             if fnmatch.fnmatch(basename, pattern):
                 yield os.path.join(root, basename)
 
-"""
-Setup
-"""
+
+# Setup
 @task
 def configure_www(file):
     """ Configure the Nginx www server"""
     require('settings', provided_by=[production, staging, local])
     context = {
-            'server_name': env.project_name, 
-            'curr_path': env.curr_path, 
+        'server_name': env.project_name,
+        'curr_path': env.curr_path,
     }
-    upload_template(file, 
+    upload_template(
+        file,
         '/etc/nginx/nginx.conf',
         context=context, use_sudo=True)
 
@@ -211,17 +211,17 @@ def configure_www(file):
 def configure_uwsgi(file):
     """ Configure UWSGI app server"""
     require('settings', provided_by=[production, staging, local])
-    upload_template(file, 
+    upload_template(
+        file,
         '/etc/uwsgi/apps-available/%(project_name)s' % env,
         use_sudo=True)
 
-    sudo('ln -fs /etc/uwsgi/apps-available/%(project_name)s /etc/uwsgi/apps-enabled/%(project_name)s.xml' % env)
+    sudo('ln -fs /etc/uwsgi/apps-available/%(project_name)s \
+          /etc/uwsgi/apps-enabled/%(project_name)s.xml' % env)
     app('restart')
 
 
-"""
-Release
-"""
+# Release
 @task
 def setup():
     require('settings', provided_by=[production, staging, local])
@@ -256,7 +256,8 @@ def deploy(with_maintenance=False, update_requirements=False):
 
 @task
 def rollback():
-    """ Removes latest release and repoints current symlink to the previous release """
+    """ Removes latest release and repoints current symlink
+        to the previous release """
     require('settings', provided_by=[production, staging, local])
 
     remove_latest_release()
@@ -276,7 +277,10 @@ def maintenance_up():
     """ Prompts for a reason why we are down, then deploys maintenance page """
     ctx = {}
     ctx['reason'] = prompt("Why are we downs?")
-    upload_template('%(maintenance_file)s' % env, '%(curr_path)s/maintenance.html' % env, context=ctx, backup=False)
+    upload_template(
+        '%(maintenance_file)s' % env,
+        '%(curr_path)s/maintenance.html' % env,
+        context=ctx, backup=False)
 
 
 @task
@@ -286,9 +290,7 @@ def maintenance_down():
         run('rm %(curr_path)s/maintenance.html' % env)
 
 
-"""
-Maintenance
-"""
+# Maintenance
 @task
 @roles('www')
 def www(action):
