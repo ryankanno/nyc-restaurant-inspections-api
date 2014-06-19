@@ -17,6 +17,7 @@ develop-eggs
 pip-log.txt
 
 # Unit test / coverage reports
+coverage.xml
 .coverage
 .tox
 
@@ -26,6 +27,6 @@ pip-log.txt
 #Mr Developer
 .mr.developer.cfg
 
-#NYC Data
+# NYC Data
 data/*.txt
 data/*.xls
