@@ -49,7 +49,8 @@ with open(os.path.join(here, 'nyc_inspections/__init__.py'), 'r') as f:
 requires = ['Flask==0.9',
             'SQLAlchemy==0.7.8',
             'Flask-SQLAlchemy==0.16',
-            'MySQL-Python==1.2.3',
+            'ordereddict',
+            #'MySQL-Python==1.2.3',
             'fabric']
 
 tests_require = ['flake8', 'mock', 'nose', 'nosexcover']

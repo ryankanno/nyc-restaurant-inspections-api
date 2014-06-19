@@ -2,7 +2,10 @@ from sqlalchemy import Column
 from sqlalchemy import Integer, Unicode, String, Boolean, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from database import Base
-from collections import OrderedDict
+try:
+    from collections import OrderedDict
+except ImportError:
+    from ordereddict import OrderedDict
 import itertools
 from utilities import empty_dict
 
