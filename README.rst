@@ -1,6 +1,12 @@
 nyc-inspections
 ===============
 
+.. image:: https://travis-ci.org/ryankanno/nyc-inspections.png?branch=master
+   :target: https://travis-ci.org/ryankanno/nyc-inspections
+
+.. image:: https://coveralls.io/repos/ryankanno/nyc-inspections/badge.png
+   :target: https://coveralls.io/r/ryankanno/nyc-inspections
+
 API for NYC restaurant inspections.
 
 A tiny Flask + Redis weekend project that returns NYC restaurant inspections.
@@ -39,3 +45,7 @@ Here are some curl commands to play around with the api:
 
 todo
 ----
+
+license
+-------
+MIT
