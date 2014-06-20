@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-
 import sys
 import os
 
@@ -23,7 +22,6 @@ def shutdown_session(exception=None):
     db_session.remove()
 
 
-# TODO : Add address search
 @app.route("/", methods=['POST'])
 def search():
     results = []

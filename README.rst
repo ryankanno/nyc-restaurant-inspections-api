@@ -1,7 +1,7 @@
 nyc-inspections
 ===============
 
-An API for NYC restaurant inspections.
+API for NYC restaurant inspections.
 
 A tiny Flask + Redis weekend project that returns NYC restaurant inspections.
 
@@ -25,7 +25,7 @@ deploy
 
 To run the flask app, make sure you have Flask installed:
 
-`python api.py`
+`python nyc_inspections/api.py`
 
 
 test
@@ -36,3 +36,6 @@ Here are some curl commands to play around with the api:
 **Finding all restaurants with Japanese in their name**
 
 `curl -s -H "Accept:  application/json" -d "name=Japanese" http://localhost:5000 | python -mjson.tool`
+
+todo
+----
