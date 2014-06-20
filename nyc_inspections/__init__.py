@@ -6,10 +6,10 @@ from collections import namedtuple
 version_info = namedtuple('version_info', ('major', 'minor', 'patch'))
 
 
-VERSION = version_info(0, 0, 2)
+VERSION = version_info(0, 0, 1)
 
 
-__title__ = 'py_skeleon'
+__title__ = 'nyc_inspections'
 __version__ = '{0.major}.{0.minor}.{0.patch}'.format(VERSION)
 __author__ = 'Ryan Kanno'
 __email__ = 'ryankanno@localkinegrinds.com'
