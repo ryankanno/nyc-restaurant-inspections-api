@@ -12,7 +12,7 @@ from utilities import empty_dict
 
 BOROUGHS = {
     1: 'Manhattan',
-    2: 'The Brox',
+    2: 'The Bronx',
     3: 'Brooklyn',
     4: 'Queens',
     5: 'Staten Island',
