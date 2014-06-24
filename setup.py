@@ -50,7 +50,8 @@ requires = ['Flask==0.9',
             'SQLAlchemy==0.7.8',
             'Flask-SQLAlchemy==0.16',
             'ordereddict',
-            #'MySQL-Python==1.2.3',
+            'Flask-Cache',
+            'redis',
             'fabric']
 
 tests_require = ['flake8', 'mock', 'nose', 'nosexcover']
