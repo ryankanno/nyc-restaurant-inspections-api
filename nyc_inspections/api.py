@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import sys
-import locale
 import os
 
 from flask import Flask
