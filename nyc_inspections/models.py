@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 from database import Base
 try:
     from collections import OrderedDict
-except ImportError:
+except ImportError:  # pragma: no cover
     from ordereddict import OrderedDict
 import itertools
 from utilities import empty_dict
@@ -160,6 +160,7 @@ class Restaurant(Base):
     @property
     def serialize(self):
         restaurant = OrderedDict()
+        restaurant['id'] = self.id
         restaurant['name'] = self.name
         restaurant['phone'] = self.phone
         restaurant['street_address'] = self.address
