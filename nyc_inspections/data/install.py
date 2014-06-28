@@ -25,8 +25,8 @@ from models import Violation
 from models import Cuisine
 from models import Restaurant
 from models import Inspection
-from database import db_session
-from database import init_db
+from ..database import db_session
+from ..database import init_db
 
 
 LOG_LEVEL = logging.DEBUG
@@ -174,9 +174,6 @@ def cleanup():
 
 def main(argv=None):
     logging.basicConfig(level=LOG_LEVEL, format=LOG_FORMAT)
-
-    if argv is None:
-        argv = sys.argv
 
     init_workspace()
     init_db()
