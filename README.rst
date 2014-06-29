@@ -41,7 +41,11 @@ Here are some curl commands to play around with the api:
 
 **Finding all restaurants with Japanese in their name**
 
-`curl -s -H "Accept:  application/json" -d "name=Japanese" http://localhost:5000 | python -mjson.tool`
+`curl -s -H "Accept:  application/json" -d "name=Japanese" http://localhost:5000/find/by_name | python -mjson.tool`
+
+**Finding restaurant with id 10**
+
+`curl -s -H "Accept:  application/json" http://localhost:5000/restaurants/10 | python -mjson.tool`
 
 todo
 ----

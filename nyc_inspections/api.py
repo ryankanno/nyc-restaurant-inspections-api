@@ -30,7 +30,7 @@ def shutdown_session(exception=None):
     db_session.remove()
 
 
-@app.route("/", methods=['POST'])
+@app.route("/find/by_name", methods=['POST'])
 @cache.cached(key_prefix=_make_cache_key)
 def search():
     results = []
@@ -44,6 +44,16 @@ def search():
             results.append(restaurant.serialize)
 
     return jsonify(restaurants=results)
+
+
+@app.route("/restaurants/<int:restaurant_id>", methods=['GET'])
+@cache.cached(key_prefix=_make_cache_key)
+def get_by_id(restaurant_id):
+    restaurant = {}
+    if restaurant_id:
+        restaurant = Restaurant.query.get(restaurant_id)
+
+    return jsonify(restaurant.serialize)
 
 
 if __name__ == "__main__":
