@@ -5,6 +5,7 @@ import datetime
 from nose.tools import ok_
 from nyc_inspections.models import BOROUGHS
 from nyc_inspections.models import Action
+from nyc_inspections.models import Cuisine
 from nyc_inspections.models import Violation
 import unittest
 
@@ -35,6 +36,17 @@ class TestModels(unittest.TestCase):
         ok_(action.description == action_desc)
         ok_(action.start_at == action_start)
         ok_(action.end_at == action_end)
+
+    def test_cuisine(self):
+        cuisine_code = "123"
+        cuisine_desc = "Japanese"
+        cuisine_params = {
+            'code': cuisine_code,
+            'description': cuisine_desc,
+        }
+        cuisine = Cuisine(**cuisine_params)
+        ok_(cuisine.code == cuisine_code)
+        ok_(cuisine.description == cuisine_desc)
 
     def test_violation(self):
         violation_code = "10E"
