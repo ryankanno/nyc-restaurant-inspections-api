@@ -9,7 +9,7 @@ nyc-inspections
 
 API for NYC restaurant inspections.
 
-A tiny Flask + Redis weekend project that returns NYC restaurant inspections.
+A Flask + Redis weekend project that returns NYC restaurant inspection data.
 
 Data courtesy of https://nycopendata.socrata.com/Health/Restaurant-Inspection-Results/4vkw-7nck
 
