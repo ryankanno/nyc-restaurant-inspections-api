@@ -1,0 +1,70 @@
+---
+- hosts: all
+  gather_facts: no
+  sudo: true
+  tasks:
+    - name: apt >> update apt package cache
+      apt: update_cache=yes cache_valid_time=3600
+      environment: env.proxies
+
+    - name: apt >> upgrade installed packages
+      apt: upgrade=yes
+      environment: env.proxies
+
+    - name: pythondev >> python present
+      apt: pkg=python2.7 state=latest
+      environment: env.proxies
+
+    - name: pythondev >> latest python libraries present
+      apt: pkg={{ item }} state=latest
+      with_items:
+        - python-dev
+        - python-pip
+      environment: env.proxies
+
+    - name: redis >> redis present
+      apt: pkg=redis-server state=latest
+      environment: env.proxies
+      notify: restart redis
+
+    - name: nginx >> nginx present
+      apt: pkg=nginx state=latest
+      environment: env.proxies
+
+    - name: nginx >> setup directories
+      file: path=/etc/nginx/nginx-conf state=directory
+
+    - name: nginx >> conf present
+      template: src={{ item.src }} dest={{ item.dest }} mode=0640 owner=root group=root
+      with_items:
+      - { src: 'templates/nginx/nginx.conf', dest: '/etc/nginx/nginx.conf' }
+      - { src: 'templates/nginx/nginx-nyc_inspections.conf', dest: '/etc/nginx/sites-enabled/nginx-nyc_inspections.conf' }
+
+    - name: nginx >> delete default vhost
+      file: path=/etc/nginx/sites-enabled/default state=absent
+      notify: restart nginx
+
+    - name: uwsgi >> uwsgi present
+      apt: pkg=uwsgi state=latest
+      environment: env.proxies
+
+    - name: uwsgi >> uwsgi python plugin present
+      apt: pkg=uwsgi-plugin-python state=latest
+      environment: env.proxies
+
+    - name: uwsgi >> uwsgi site conf present
+      template: src=templates/uwsgi/nyc_inspections.xml dest=/etc/uwsgi/apps-available/nyc_inspections.xml mode=0640 owner=root group=root
+
+    - name: uwsgi >> uwsgi site conf enabled
+      file: src=/etc/uwsgi/apps-available/nyc_inspections.xml dest=/etc/uwsgi/apps-enabled/nyc_inspections.xml state=link
+      notify: restart uwsgi
+
+  handlers:
+    - name: restart redis
+      service: name=redis-server state=restarted enabled=true
+
+    - name: restart nginx
+      service: name=nginx pattern=/etc/init.d/nginx state=restarted enabled=yes
+
+    - name: restart uwsgi
+      service: name=uwsgi pattern=/etc/init.d/uwsgi state=restarted enabled=yes
