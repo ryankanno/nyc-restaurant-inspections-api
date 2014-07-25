@@ -21,7 +21,7 @@ data
 
 To create the database as a temp SQLite database, run the following command:
 
-`python nyc_inspections/data/install.py`
+`python -m nyc_inspections.data.install`
 
 Note: At some point, this will pull data from the above url, but in the
 meantime, bear with me. :D
@@ -31,7 +31,7 @@ deploy
 
 To run the flask app, make sure you have Flask installed:
 
-`python nyc_inspections/api.py`
+`python -m nyc_inspections.api`
 
 
 test
