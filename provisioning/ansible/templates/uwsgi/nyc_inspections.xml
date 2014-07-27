@@ -1,10 +1,13 @@
 <uwsgi>
     <socket>127.0.0.1:6969</socket>
-    <pythonpath>/home/nyc_inspections/apps/nyc_inspections</pythonpath>
-    <module>api</module>
+    <pythonpath>/home/nyc_inspections/apps</pythonpath>
+    <module>nyc_inspections.api</module>
+    <callable>app</callable>
     <plugins>python</plugins>
     <processes>1</processes>
-    <pidfile>/var/run/uwsgi/app/%n/pid</pidfile>
+    <pidfile>/var/run/uwsgi/app/%n.pid</pidfile>
+    <chmod-socket>666</chmod-socket>
+    <chown-socket>1000:1000</chown-socket>
     <uid>1000</uid>
     <gid>1000</gid>
     <enable-threads/>

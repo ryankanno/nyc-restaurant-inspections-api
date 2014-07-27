@@ -38,11 +38,20 @@
       template: src={{ item.src }} dest={{ item.dest }} mode=0640 owner=root group=root
       with_items:
       - { src: 'templates/nginx/nginx.conf', dest: '/etc/nginx/nginx.conf' }
-      - { src: 'templates/nginx/nginx-nyc_inspections.conf', dest: '/etc/nginx/sites-enabled/nginx-nyc_inspections.conf' }
+      - { src: 'templates/nginx/nginx-nyc_inspections.conf', dest: '/etc/nginx/sites-available/nginx-nyc_inspections.conf' }
+
+    - name: nginx >> conf enabled
+      file: src=/etc/nginx/sites-available/nginx-nyc_inspections.conf dest=/etc/nginx/sites-enabled/nginx-nyc_inspections.conf state=link
 
     - name: nginx >> delete default vhost
       file: path=/etc/nginx/sites-enabled/default state=absent
       notify: restart nginx
+
+    - name: app >> install application
+      command: bash -lc "cd /vagrant && python setup.py install"
+
+    - name: app >> install data
+      command: bash -lc "cd /vagrant && python -m nyc_inspections.data.install" creates=/home/nyc_inspections/apps/nyc_inspections/data/RI_Webextract_BigApps_Latest.xls
 
     - name: uwsgi >> uwsgi present
       apt: pkg=uwsgi state=latest
