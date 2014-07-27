@@ -28,8 +28,8 @@ coverage.xml
 .mr.developer.cfg
 
 # NYC Data
-data/*.txt
-data/*.xls
+nyc_inspections/data/*.txt
+nyc_inspections/data/*.xls
 
 # Vagrant
 .vagrant/
