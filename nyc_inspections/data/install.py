@@ -18,13 +18,12 @@ from datetime import datetime
 from zipfile import ZipFile
 
 DATA_DIRECTORY = os.path.normpath(os.path.realpath(os.path.dirname(__file__)))
-sys.path.insert(0, os.path.join(DATA_DIRECTORY, os.path.pardir))
 
-from models import Action
-from models import Violation
-from models import Cuisine
-from models import Restaurant
-from models import Inspection
+from ..models import Action
+from ..models import Violation
+from ..models import Cuisine
+from ..models import Restaurant
+from ..models import Inspection
 from ..database import db_session
 from ..database import init_db
 
