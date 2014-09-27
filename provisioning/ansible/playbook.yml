@@ -31,9 +31,6 @@
       apt: pkg=nginx state=latest
       environment: env.proxies
 
-    - name: nginx >> setup directories
-      file: path=/etc/nginx/nginx-conf state=directory
-
     - name: nginx >> conf present
       template: src={{ item.src }} dest={{ item.dest }} mode=0640 owner=root group=root
       with_items:
@@ -48,10 +45,12 @@
       notify: restart nginx
 
     - name: app >> install application
-      command: bash -lc "cd /vagrant && python setup.py install"
+      command: bash -lc "cd /vagrant && sudo python setup.py install"
 
     - name: app >> install data
-      command: bash -lc "cd /vagrant && python -m nyc_inspections.data.install" creates=/home/nyc_inspections/apps/nyc_inspections/data/RI_Webextract_BigApps_Latest.xls
+      command: bash -lc "cd /vagrant && python -m nyc_inspections.data.install" creates=/tmp/test.db
+      # command: bash -lc "cd /vagrant && python -m nyc_inspections.data.install" creates=/home/nyc_inspections/apps/nyc_inspections/data/RI_Webextract_BigApps_Latest.xls
+
 
     - name: uwsgi >> uwsgi present
       apt: pkg=uwsgi state=latest

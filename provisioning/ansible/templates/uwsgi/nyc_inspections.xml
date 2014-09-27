@@ -1,5 +1,5 @@
 <uwsgi>
-    <socket>127.0.0.1:6969</socket>
+    <http>127.0.0.1:6969</http>
     <pythonpath>/home/nyc_inspections/apps</pythonpath>
     <module>nyc_inspections.api</module>
     <callable>app</callable>
