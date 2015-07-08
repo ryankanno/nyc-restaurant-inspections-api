@@ -5,7 +5,8 @@
 .. image:: https://coveralls.io/repos/ryankanno/nyc-inspections/badge.png
    :target: https://coveralls.io/r/ryankanno/nyc-inspections
 
-API for NYC restaurant inspections.
+API for NYC restaurant inspections
+==================================
 
 A Flask + Redis weekend project that returns NYC restaurant inspection data.
 
