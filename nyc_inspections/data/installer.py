@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 
-__all__ = ['main']
 __author__ = "Ryan Kanno <ryankanno@localkinegrinds.com>"
 __url__ = ""
 __version__ = ""

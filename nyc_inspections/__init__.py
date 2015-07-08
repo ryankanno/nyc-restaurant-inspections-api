@@ -18,6 +18,6 @@ __copyright__ = 'Copyright 2014 Ryan Kanno'
 
 from .app import get_app
 app = get_app()
-from .api import *
+from .api import *  # NOQA
 
 # vim: filetype=python
