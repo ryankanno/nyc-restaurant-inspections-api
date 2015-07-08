@@ -16,4 +16,8 @@ __email__ = 'ryankanno@localkinegrinds.com'
 __license__ = 'MIT'
 __copyright__ = 'Copyright 2014 Ryan Kanno'
 
+from .app import get_app
+app = get_app()
+from .api import *
+
 # vim: filetype=python

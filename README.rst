@@ -11,45 +11,75 @@ API for NYC restaurant inspections.
 
 A Flask + Redis weekend project that returns NYC restaurant inspection data.
 
-Data courtesy of https://nycopendata.socrata.com/Health/Restaurant-Inspection-Results/4vkw-7nck
+Data courtesy of https://data.cityofnewyork.us/Health/DOHMH-New-York-City-Restaurant-Inspection-Results/xx67-kt59
 
-install
+Install
 -------
 
-data
-~~~~
+* Install redis-server (sudo port install redis-server, brew install redis)
+* Install the requirements by running `pip install -r requirements.txt`
 
-To create the database as a temp SQLite database, run the following command:
+Download the Socrata data
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`python -m nyc_inspections.data.install`
+To download the socrata, run the following command:
 
-Note: At some point, this will pull data from the above url, but in the
-meantime, bear with me. :D
+`python manage.py download_data`
 
-deploy
-~~~~~~
+Make sure to remember the output file path (or pass in a path of your own)
 
-To run the flask app, make sure you have Flask installed:
+(`python manage.py download_data --help`)
 
-`python -m nyc_inspections.api`
+Create the database
+~~~~~~~~~~~~~~~~~~~
+
+To create the database, run the following command:
+
+`python manage.py create_db`
+
+Seed the database
+~~~~~~~~~~~~~~~~~
+
+To seed the database, run the following command:
+
+`python manage.py seed_db -f <output_file_path_from_download_data_command>`
+
+Run Server
+~~~~~~~~~~
+
+To run the server, run the following command:
+
+`python manage.py runserver`
+
+Drop the database
+~~~~~~~~~~~~~~~~~
+
+After you're done playing with this magical goodness,
+to drop the database, run the following command:
+
+`python manage.py drop_db`
 
 
-test
-~~~~
+Examples
+~~~~~~~~
 
 Here are some curl commands to play around with the api:
 
-**Finding all restaurants with Japanese in their name**
+**Finding all restaurants (and inspections) with Japanese in their name**
 
-`curl -s -H "Accept:  application/json" -d "name=Japanese" http://localhost:5000/find/by_name | python -mjson.tool`
+`curl -s -H "Accept:  application/json" -d "name=Japanese" http://localhost:5000/restaurants/by_name | python -mjson.tool`
+
+**Finding all restaurants (and inspections) with Japanese cuisine**
+
+`curl -s -H "Accept:  application/json" -d "cuisine=Japanese" http://localhost:5000/restaurants/by_cuisine | python -mjson.tool`
 
 **Finding restaurant with id 10**
 
 `curl -s -H "Accept:  application/json" http://localhost:5000/restaurants/10 | python -mjson.tool`
 
-todo
+TODO
 ----
 
-license
+License
 -------
 MIT

@@ -27,12 +27,11 @@ coverage.xml
 #Mr Developer
 .mr.developer.cfg
 
-# NYC Data
-nyc_inspections/data/*.txt
-nyc_inspections/data/*.xls
-
 # Vagrant
 .vagrant/
 
 # Redis
 dump.rdb
+
+# Pyenv
+.python-version

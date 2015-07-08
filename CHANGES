@@ -1,0 +1,17 @@
+2015-07-07
+==========
+
+* Removed dohmh_restaurant-inspections_002.zip from repository
+* Added following management commands:
+  - `python manage.py download_data`
+  - `python manage.py create_db`
+  - `python manage.py seed_db`
+  - `python manage.py runserver`
+  - `python manage.py drop_db`
+  - `python manage.py flush_cache`
+* Changed API endpoint
+  - /find/by_name -> /restaurants/by_name
+* Added API endpoint
+  - /restaurants/by_cuisine
+* Refactored code to match new dataset
+* Updated README.rst

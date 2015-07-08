@@ -46,13 +46,13 @@ with open(os.path.join(here, 'nyc_inspections/__init__.py'), 'r') as f:
 
 # Requires
 
-requires = ['Flask==0.9',
-            'SQLAlchemy==0.7.8',
-            'Flask-SQLAlchemy==0.16',
+requires = ['Flask==0.10.1',
+            'SQLAlchemy==1.0.6',
+            'Flask-SQLAlchemy==2.0',
+            'Flask-Script>=2.0.5',
             'ordereddict',
             'Flask-Cache',
-            'redis',
-            'fabric']
+            'redis']
 
 tests_require = ['flake8', 'mock', 'nose', 'nosexcover']
 

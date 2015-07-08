@@ -11,11 +11,11 @@ from utilities import empty_dict
 
 
 BOROUGHS = {
-    1: 'Manhattan',
-    2: 'The Bronx',
-    3: 'Brooklyn',
-    4: 'Queens',
-    5: 'Staten Island',
+    'manhattan': 1,
+    'bronx': 2,
+    'brooklyn': 3,
+    'queens': 4,
+    'staten island': 5
 }
 
 
@@ -23,20 +23,13 @@ class Action(Base):
     __tablename__ = 'Action'
 
     id = Column(Integer, primary_key=True)
-    code = Column(String(10))
     description = Column(String(150))
-    start_at = Column(DateTime)
-    end_at = Column(DateTime)
 
-    def __init__(self, code=None, description=None,
-                 start_at=None, end_at=None):
-        self.code = code
+    def __init__(self, description=None):
         self.description = description
-        self.start_at = start_at
-        self.end_at = end_at
 
     def __repr__(self):
-        return u"<Action %r>".format(self.code)
+        return u"<Action %r>".format(self.description)
 
 
 class Violation(Base):
@@ -46,16 +39,11 @@ class Violation(Base):
     code = Column(String(3))
     description = Column(Unicode(600))
     is_critical = Column(Boolean())
-    start_at = Column(DateTime)
-    end_at = Column(DateTime)
 
-    def __init__(self, code=None, description=None, is_critical=False,
-                 start_at=None, end_at=None):
+    def __init__(self, code=None, description=None, is_critical=False):
         self.code = code
         self.description = description
         self.is_critical = is_critical
-        self.start_at = start_at
-        self.end_at = end_at
 
     def __repr__(self):
         return u"<Violation %r>".format(self.code)
@@ -65,15 +53,13 @@ class Cuisine(Base):
     __tablename__ = 'Cuisine'
 
     id = Column(Integer, primary_key=True)
-    code = Column(String(3), unique=True)
-    description = Column(Unicode(600))
+    name = Column(Unicode(64))
 
-    def __init__(self, code=None, description=None):
-        self.code = code
-        self.description = description
+    def __init__(self, name=None):
+        self.name = name
 
     def __repr__(self):
-        return u"<Cuisine %r>".format(self.description)
+        return u"<Cuisine %r>".format(self.name)
 
 
 class Restaurant(Base):
@@ -84,20 +70,22 @@ class Restaurant(Base):
     name = Column(String(256))
     building = Column(String(10))
     street = Column(String(100))
-    zip = Column(String(5))
-    borough = Integer()
+    zip_code = Column(String(5))
+    borough = Column(Integer())
     phone = Column(String(20))
+
     inspections = relationship(
         'Inspection', backref='restaurant',
         primaryjoin="Restaurant.id==Inspection.restaurant_id")
 
-    def __init__(self, unique_id=None, name=None, building=None, street=None,
-                 zip=None, borough=None, phone=None):
+    def __init__(self, unique_id=None, name=None,
+                 building=None, street=None, zip_code=None, borough=None,
+                 phone=None):
         self.unique_id = unique_id
         self.name = name
         self.building = building
         self.street = street
-        self.zip = zip
+        self.zip_code = zip_code
         self.borough = borough
         self.phone = phone
 
@@ -109,11 +97,11 @@ class Restaurant(Base):
         if self.inspections:
             groups = []
             sorted_inspections = sorted(
-                self.inspections, key=lambda x: x.graded_at,
+                self.inspections, key=lambda x: x.inspected_at,
                 reverse=True)
 
             for k, g in itertools.groupby(sorted_inspections,
-                                          key=lambda x: x.graded_at):
+                                          key=lambda x: x.inspected_at):
                 groups.append(list(g))
 
             for group in groups:
@@ -132,7 +120,7 @@ class Restaurant(Base):
         if inspection_obj:
             inspection = inspection_obj.serialize
             empty_dict(inspection,
-                       ['action_code', 'action_desc',
+                       ['action_desc',
                         'violation_code', 'violation_desc',
                         'violation_is_critical'])
         return inspection
@@ -151,7 +139,7 @@ class Restaurant(Base):
     def address(self):
         bldg = self.building.strip()
         bldg = "{0} ".format(bldg) if len(bldg) > 0 else ""
-        if self.street and self.zip:
+        if self.street and self.zip_code:
             return u"{building}{street}".format(
                 building=bldg, street=self.street)
         else:
@@ -164,9 +152,11 @@ class Restaurant(Base):
         restaurant['name'] = self.name
         restaurant['phone'] = self.phone
         restaurant['street_address'] = self.address
-        restaurant['zip_code'] = self.zip
+        restaurant['zip_code'] = self.zip_code
         restaurant['city'] = 'New York'
         restaurant['state'] = 'NY'
+        restaurant['borough'] = [borough for borough, index in BOROUGHS.items()
+                                 if index == self.borough][0]
         restaurant['inspections'] = self._serialized_inspections()
         return restaurant
 
@@ -177,9 +167,10 @@ class Inspection(Base):
     id = Column(Integer, primary_key=True)
     restaurant_id = Column(Integer, ForeignKey('Restaurant.id'))
     cuisine_id = Column(Integer, ForeignKey('Cuisine.id'))
-    inspected_at = Column(DateTime)
     action_id = Column(Integer, ForeignKey('Action.id'))
     violation_id = Column(Integer, ForeignKey('Violation.id'))
+    inspected_at = Column(DateTime)
+    inspection_type = Column(String)
     score = Column(Integer)
     current_grade = Column(String)
     graded_at = Column(DateTime)
@@ -198,14 +189,16 @@ class Inspection(Base):
         primaryjoin="Inspection.violation_id==Violation.id")
 
     def __init__(self, restaurant_id=None, cuisine_id=None,
-                 inspected_at=None, action_id=None, violation_id=None,
+                 action_id=None, violation_id=None,
+                 inspected_at=None, inspection_type=None,
                  score=None, current_grade=None, graded_at=None,
                  generated_at=None):
         self.restaurant_id = restaurant_id
         self.cuisine_id = cuisine_id
-        self.inspected_at = inspected_at
         self.action_id = action_id
         self.violation_id = violation_id
+        self.inspected_at = inspected_at
+        self.inspection_type = inspection_type
         self.score = score
         self.current_grade = current_grade
         self.graded_at = graded_at
@@ -219,16 +212,19 @@ class Inspection(Base):
         inspection = {
             'score': self.score,
             'current_grade': self.current_grade,
-            'inspection_date': self.graded_at.strftime('%Y-%m-%dT%H:%M:%S'),
-            'action_code': '',
+            'inspection_type': self.inspection_type,
+            'inspection_date': self.inspected_at.strftime('%Y-%m-%dT%H:%M:%S'),
             'action_desc': '',
             'violation_code': '',
             'violation_desc': '',
             'violation_is_critical': ''
         }
 
+        if self.graded_at:
+            inspection['graded_date'] = \
+                self.graded_at.strftime('%Y-%m-%dT%H:%M:%S')
+
         if self.action:
-            inspection['action_code'] = self.action.code
             inspection['action_desc'] = self.action.description
 
         if self.violation:
