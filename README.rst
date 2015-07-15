@@ -31,7 +31,7 @@ Make sure to remember the output file path (or pass in a path of your own)
 
 .. code:: python
 
-  `python manage.py download_data --help`
+  python manage.py download_data --help
 
 Create the database
 -------------------
