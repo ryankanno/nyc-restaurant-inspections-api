@@ -1,9 +1,9 @@
 
-.. image:: https://travis-ci.org/ryankanno/nyc-inspections.png?branch=master
-   :target: https://travis-ci.org/ryankanno/nyc-inspections
+.. image:: https://travis-ci.org/ryankanno/nyc-restaurant-inspections-api.svg?branch=master
+   :target: https://travis-ci.org/ryankanno/nyc-restaurant-inspections-api
 
-.. image:: https://coveralls.io/repos/ryankanno/nyc-inspections/badge.png
-   :target: https://coveralls.io/r/ryankanno/nyc-inspections
+.. image:: https://coveralls.io/repos/ryankanno/nyc-restaurant-inspections-api/badge.svg?branch=master&service=github
+   :target: https://coveralls.io/github/ryankanno/nyc-restaurant-inspections-api?branch=master
 
 API for NYC restaurant inspections
 ==================================
